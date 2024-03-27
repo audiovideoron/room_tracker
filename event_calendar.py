@@ -13,6 +13,15 @@ class EventCalendar:
         return df
 
     def add_event(self, event_name, start_date, end_date, rooms):
+        # List of valid rooms
+        valid_rooms = ['v1', 'v2', 'v3', 'v4']
+
+        # Check if any of the provided rooms are invalid
+        invalid_rooms = set(rooms) - set(valid_rooms)
+        if invalid_rooms:
+            raise ValueError(f"Invalid room(s) provided: {', '.join(invalid_rooms)}. Please enter a valid room.")
+
+        # Proceed with adding the event if all rooms are valid
         for date in range(start_date, end_date + 1):
             for room in rooms:
                 self.df.at[date, room.strip()] = event_name
