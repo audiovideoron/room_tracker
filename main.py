@@ -1,35 +1,33 @@
-from input import get_user_input_without_rooms, get_room_input
 from event_calendar import EventCalendar
 import visualization
-import os
+from generate_sample_data import generate_sample_dataframe
 
 
 def main():
-    valid_rooms = ["v1", "v2", "v3", "v4"]
+    # Initialize month variable
+    month = 'Default_Month'  # Set a default value or derive from current date
 
-    while True:
-        event_name, start_date, end_date, month = get_user_input_without_rooms()
-        rooms = get_room_input(valid_rooms)
-        file_path = f"{month}_calendar.csv"
+    # Decide on using sample data or real data
+    use_sample_data = True  # This could be determined by user input or other conditions
 
-        # Initialize or load existing calendar
-        calendar = EventCalendar(month)
-        if os.path.exists(file_path):
-            calendar.load_calendar(file_path)
+    if use_sample_data:
+        df = generate_sample_dataframe()
+        month = 'Sample_Month'  # Example month name for sample data
+    else:
+        # If not using sample data, you'd gather user inputs to create or update the calendar DataFrame
+        # For example purposes, let's assume an empty DataFrame initialization
+        # Ensure this logic sets 'df' and 'month' appropriately
+        df = generate_sample_dataframe()  # Placeholder for actual data gathering
+        # month would be set based on the actual data gathering process
 
-        try:
-            calendar.add_event(event_name, start_date, end_date, rooms)
-        except ValueError as e:
-            print(e)
-            continue  # Go back to the start of the loop if there was an error
-        else:
-            calendar.save_calendar(file_path)
-            visualization.visualize_calendar(calendar.df, month)
+    calendar = EventCalendar(month)  # Adjust this as per your EventCalendar class definition
+    calendar.df = df  # Assuming EventCalendar can accept a DataFrame this way
 
-        # Ask the user if they want to add another event
-        another = input("Would you like to add another event? (yes or no) ").strip().lower()
-        if another != 'yes':
-            break  # Exit the loop if the user does not want to add another event
+    # Generate and display the visualization
+    fig = visualization.create_visualization_figure(calendar.df, month)
+
+    # Assuming 'display_figure' is implemented to handle figure display or file saving
+    visualization.display_figure(fig, month)  # This needs to be implemented in visualization.py
 
 
 if __name__ == "__main__":

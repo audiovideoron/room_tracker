@@ -1,91 +1,87 @@
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
 
-def visualize_calendar(calendar_df, month):
-    fig, ax = plt.subplots(figsize=(10, 12))
-    # Set the title at the top of the figure
-    plt.title(f'Ballroom Occupancy for {month}', fontsize=20, pad=20)
-    # Set room positions and labels
-    room_positions = {room: index for index, room in enumerate(calendar_df.columns)}
-    ax.set_xticks(np.arange(len(calendar_df.columns)) + 0.5)
-    ax.set_xticklabels(calendar_df.columns)
-    ax.set_xlim(0, len(calendar_df.columns))
-    # Set y-ticks to show dates at the center of each row
-    ax.set_yticks(np.arange(len(calendar_df.index)) + 0.5)
-    ax.set_yticklabels(reversed(calendar_df.index))
-    ax.set_ylim(0, len(calendar_df.index))
-    # Grid and labels
-    ax.set_axisbelow(True)
-    ax.yaxis.grid(True)
-    ax.xaxis.tick_top()
-    ax.xaxis.set_label_position('top')
-    ax.set_xlabel('Rooms')
-    ax.set_ylabel('Dates')
+def create_visualization_figure(df, month):
+    fig = go.Figure()
 
-    # Generate a color map for events
-    unique_events = pd.unique(calendar_df.values.ravel())
-    colors = plt.cm.get_cmap('tab20', len(unique_events))
-    event_colors = {event: colors(i) for i, event in enumerate(unique_events) if pd.notna(event)}
+    # Define positions for each room based on their order
+    room_positions = {room: i + 1 for i, room in enumerate(df.columns)}
 
-# This is version 3
-    # ... [unchanged parts of your code] ...
+    # Add events as markers, positioned according to their room and day
+    for room, pos in room_positions.items():
+        events_in_room = df[room].dropna()
+        for day, event in events_in_room.items():
+            fig.add_trace(go.Scatter(
+                x=[pos],  # Position based on room order
+                y=[day],
+                text=[event],
+                mode='markers+text',
+                marker=dict(size=12),
+                name=event,  # Use event name for the legend
+                textposition="bottom center"
+            ))
 
-    # Draw colored backgrounds for events
-    for room_index, room in enumerate(calendar_df.columns):
-        for day in calendar_df.index:
-            event = calendar_df.at[day, room]
-            if pd.notna(event):
-                # Adjust the y-coordinate by adding 0.5 to shift the event rectangle up to align with the grid
-                rect_y = len(calendar_df.index) - day + 0.5
-                color = event_colors.get(event, 'lightgrey')
-                rect = patches.Rectangle((room_index, rect_y - 1), 1, 1, color=color, alpha=0.5)
-                ax.add_patch(rect)
-                # Center the text within the shifted rectangle
-                ax.text(room_index + 0.5, rect_y - 0.5, event, ha='center', va='center', fontsize=10)
+    # Customizing the layout to place room labels at the top and ensure grid appearance
+    fig.update_layout(
+        title=f'Event Schedule for {month}',
+        xaxis=dict(
+            tickmode='array',
+            tickvals=list(room_positions.values()),
+            ticktext=list(room_positions.keys()),
+            showgrid=True,  # Show vertical gridlines
+            gridwidth=1,
+            gridcolor='lightgrey',
+            side='top'  # Position room names at the top of the chart
+        ),
+        yaxis=dict(
+            autorange='reversed',
+            range=[0.5, 31.5],  # Adjust the range to include all days
+            tickmode='array',
+            tickvals=list(range(1, 32)),
+            ticktext=[str(day) for day in range(1, 32)],
+            showgrid=True,  # Show horizontal gridlines
+            gridwidth=1,
+            gridcolor='lightgrey'
+        ),
+        plot_bgcolor="white",
+        hovermode='closest'
+    )
 
-    # ...
+    # Add a rectangle around the outer perimeter of the grid to emphasize boundary
+    fig.add_shape(
+        type="rect",
+        x0=0.5,
+        y0=0.5,
+        x1=len(df.columns) + 0.5,
+        y1=31.5,
+        line=dict(
+            color="Black",
+            width=2,
+        ),
+    )
 
-    # ... [rest of the plotting code] ...
-    # Month label
-    # plt.text(0.5, -0.05, month, fontsize=20, transform=ax.transAxes, ha='center', va='center')
-    plt.show()
+    return fig
 
 
-# Create an example DataFrame structure with some events
-calendar_df_example = pd.DataFrame({
-    'v4': [np.nan] * 32,
-    'v3': [np.nan] * 32,
-    'v2': [np.nan] * 32,
-    'v1': [np.nan] * 32
-}, index=range(1, 33))
-calendar_df_example.at[10, 'v2'] = 'Event2'
-calendar_df_example.at[14, 'v1'] = 'Event3'
-calendar_df_example.at[20, 'v4'] = 'Event4'
-calendar_df_example.at[5, 'v1'] = 'Event5'
-calendar_df_example.at[5, 'v2'] = 'Event5'
-calendar_df_example.at[6, 'v1'] = 'Event5'
-calendar_df_example.at[6, 'v2'] = 'Event5'
-calendar_df_example.at[12, 'v3'] = 'Event6'
-calendar_df_example.at[15, 'v2'] = 'Event7'
-calendar_df_example.at[15, 'v3'] = 'Event7'
-calendar_df_example.at[16, 'v2'] = 'Event7'
-calendar_df_example.at[16, 'v3'] = 'Event7'
-calendar_df_example.at[17, 'v2'] = 'Event7'
-calendar_df_example.at[17, 'v3'] = 'Event7'
-calendar_df_example.at[22, 'v1'] = 'Event8'
-calendar_df_example.at[22, 'v4'] = 'Event8'
-calendar_df_example.at[23, 'v4'] = 'Event8'
-calendar_df_example.at[24, 'v4'] = 'Event8'
-calendar_df_example.at[26, 'v1'] = 'Event9'
-calendar_df_example.at[26, 'v2'] = 'Event9'
-calendar_df_example.at[28, 'v3'] = 'Event10'
-calendar_df_example.at[30, 'v2'] = 'Event11'
-calendar_df_example.at[30, 'v3'] = 'Event11'
-calendar_df_example.at[31, 'v2'] = 'Event12'
-calendar_df_example.at[31, 'v3'] = 'Event12'
-calendar_df_example.at[31, 'v4'] = 'Event12'
+def display_figure(fig, filename='visualization.html'):
+    """
+    Saves the figure as an HTML file and automatically opens it in the default web browser.
+    """
+    fig.write_html(filename, auto_open=True)
 
-visualize_calendar(calendar_df_example, 'May')
+
+# Sample usage
+if __name__ == '__main__':
+    # Create a sample DataFrame for demonstration purposes
+    sample_data = {
+        'v4': [None] * 31, 'v3': [None] * 31, 'v2': [None] * 31, 'v1': [None] * 31,
+    }
+    df_sample = pd.DataFrame(sample_data, index=np.arange(1, 32))
+    df_sample.at[10, 'v2'] = 'Event1'
+    df_sample.at[20, 'v4'] = 'Event2'
+
+    # Create and display the figure
+    fig = create_visualization_figure(df_sample, 'Sample Month')
+    display_figure(fig)
