@@ -1,14 +1,3 @@
-# TODO: Evenly Spaced Columns for each room: We can adjust the x-axis tick positions
-# to correctly place the room labels over the evenly spaced columns they must be centered.
-
-# TODO: Grid Lines: The addition of the gridlines can be done by specifying
-# showgrid=True in the layout update for both the x-axis and y-axis.
-# These lines will help define the spreadsheet-like structure.
-
-# TODO: Displaying Event Names: To ensure event names are visible,
-# we can adjust the text font size and color to make sure
-# it stands out over the event color.
-
 from event_calendar import EventCalendar
 import visualization
 from generate_sample_data import generate_sample_dataframe
