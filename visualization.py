@@ -1,7 +1,17 @@
+# TODO: Evenly Spaced Columns for each room: We can adjust the x-axis tick positions
+# to correctly center the room labels over the evenly spaced columns.
+
+# TODO: Grid Lines: The addition of the gridlines can be done by specifying
+# showgrid=True in the layout update for both the x-axis and y-axis.
+# These lines will help define the spreadsheet-like structure.
+
+# TODO: Displaying Event Names: To ensure event names are visible,
+# we can adjust the text font size and color to make sure
+# it stands out over the event color.
+
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
-
 
 def create_visualization_figure(df, month):
     fig = go.Figure()
@@ -10,8 +20,10 @@ def create_visualization_figure(df, month):
     room_positions = np.linspace(start=1, stop=4, num=4)
 
     # Define a dictionary to assign each room a unique color
-    event_colors = {event: f'rgb({np.random.randint(0, 255)}, {np.random.randint(0, 255)}, {np.random.randint(0, 255)})'
-                    for event in pd.unique(df.values.ravel()) if pd.notnull(event)}
+    event_colors = {
+        event: f'rgb({np.random.randint(0, 255)}, {np.random.randint(0, 255)}, {np.random.randint(0, 255)})'
+        for event in pd.unique(df.values.ravel()) if pd.notnull(event)
+    }
 
     # Add rectangles for the events
     for room, pos in zip(df.columns, room_positions):
@@ -41,9 +53,9 @@ def create_visualization_figure(df, month):
             tickmode='array',
             tickvals=list(room_positions),
             ticktext=df.columns,
-            showgrid=True,  # Show vertical gridlines for rooms
-            gridwidth=1,
-            gridcolor='lightgrey',
+            showgrid=True,  # Add vertical gridlines for rooms
+            gridwidth=2,  # Set the width of the gridlines
+            gridcolor='lightgrey',  # Set the color of the gridlines
             side='top'  # Position room names at the top of the chart
         ),
         yaxis=dict(
@@ -51,13 +63,13 @@ def create_visualization_figure(df, month):
             tickmode='array',
             tickvals=list(range(1, 32)),
             ticktext=[str(day) for day in range(1, 32)],
-            showgrid=True,  # Show horizontal gridlines for days
-            gridwidth=1,
-            gridcolor='lightgrey'
+            showgrid=True,  # Add horizontal gridlines for days
+            gridwidth=2,  # Set the width of the gridlines
+            gridcolor='lightgrey',  # Set the color of the gridlines
         ),
-        plot_bgcolor="white",  # Set background color to white
+        plot_bgcolor="white",  # Set the background color to white
         hovermode='closest',
-        showlegend=True
+        showlegend=False  # Hide legend to avoid clutter
     )
 
     # Add a rectangle around the outer perimeter of the grid to emphasize the boundary
@@ -66,19 +78,16 @@ def create_visualization_figure(df, month):
         x0=0.5, y0=0.5,
         x1=4.5, y1=31.5,
         line=dict(color="Black", width=2),
-        fillcolor="lightgrey",
         layer="below"
     )
 
     return fig
-
 
 def display_figure(fig, filename='visualization.html'):
     """
     Saves the figure as an HTML file and automatically opens it in the default web browser.
     """
     fig.write_html(filename, auto_open=True)
-
 
 # Sample usage
 if __name__ == '__main__':
