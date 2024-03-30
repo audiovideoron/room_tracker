@@ -6,21 +6,32 @@ import numpy as np
 def create_visualization_figure(df, month):
     fig = go.Figure()
 
-    # Define positions for each room based on their order
-    room_positions = {room: i + 1 for i, room in enumerate(df.columns)}
+    # Define evenly spaced positions for the four room columns
+    room_positions = np.linspace(start=1, stop=4, num=4)
 
-    # Add events as markers, positioned according to their room and day
-    for room, pos in room_positions.items():
+    # Define a dictionary to assign each room a unique color
+    event_colors = {event: f'rgb({np.random.randint(0, 255)}, {np.random.randint(0, 255)}, {np.random.randint(0, 255)})'
+                    for event in pd.unique(df.values.ravel()) if pd.notnull(event)}
+
+    # Add rectangles for the events
+    for room, pos in zip(df.columns, room_positions):
         events_in_room = df[room].dropna()
         for day, event in events_in_room.items():
+            fig.add_shape(
+                type="rect",
+                x0=pos - 0.5, y0=day - 0.5,
+                x1=pos + 0.5, y1=day + 0.5,
+                line=dict(color=event_colors[event]),
+                fillcolor=event_colors[event]
+            )
+            # Add the event name text in the center of the rectangle
             fig.add_trace(go.Scatter(
-                x=[pos],  # Position based on room order
+                x=[pos],
                 y=[day],
                 text=[event],
-                mode='markers+text',
-                marker=dict(size=12),
-                name=event,  # Use event name for the legend
-                textposition="bottom center"
+                mode='text',
+                textposition='middle center',
+                showlegend=False
             ))
 
     # Customizing the layout to place room labels at the top and ensure grid appearance
@@ -28,38 +39,35 @@ def create_visualization_figure(df, month):
         title=f'Event Schedule for {month}',
         xaxis=dict(
             tickmode='array',
-            tickvals=list(room_positions.values()),
-            ticktext=list(room_positions.keys()),
-            showgrid=True,  # Show vertical gridlines
+            tickvals=list(room_positions),
+            ticktext=df.columns,
+            showgrid=True,  # Show vertical gridlines for rooms
             gridwidth=1,
             gridcolor='lightgrey',
             side='top'  # Position room names at the top of the chart
         ),
         yaxis=dict(
-            autorange='reversed',
-            range=[0.5, 31.5],  # Adjust the range to include all days
+            autorange='reversed',  # Reverse the y-axis to have day 1 at the top
             tickmode='array',
             tickvals=list(range(1, 32)),
             ticktext=[str(day) for day in range(1, 32)],
-            showgrid=True,  # Show horizontal gridlines
+            showgrid=True,  # Show horizontal gridlines for days
             gridwidth=1,
             gridcolor='lightgrey'
         ),
-        plot_bgcolor="white",
-        hovermode='closest'
+        plot_bgcolor="white",  # Set background color to white
+        hovermode='closest',
+        showlegend=True
     )
 
-    # Add a rectangle around the outer perimeter of the grid to emphasize boundary
+    # Add a rectangle around the outer perimeter of the grid to emphasize the boundary
     fig.add_shape(
         type="rect",
-        x0=0.5,
-        y0=0.5,
-        x1=len(df.columns) + 0.5,
-        y1=31.5,
-        line=dict(
-            color="Black",
-            width=2,
-        ),
+        x0=0.5, y0=0.5,
+        x1=4.5, y1=31.5,
+        line=dict(color="Black", width=2),
+        fillcolor="lightgrey",
+        layer="below"
     )
 
     return fig
