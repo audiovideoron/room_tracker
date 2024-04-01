@@ -11,11 +11,18 @@ import numpy as np
 def create_visualization_figure(df, month):
     fig = go.Figure()
 
+    print("DataFrame to visualize:")
+    print(df)
+
     room_positions = np.linspace(start=1, stop=4, num=4)
 
     event_colors = {
         event: f'rgba({np.random.randint(0, 255)}, {np.random.randint(0, 255)}, {np.random.randint(0, 255)}, 0.5)'
         for event in pd.unique(df.values.ravel()) if pd.notnull(event)}
+
+    # Debugging: Print the event colors mapping
+    print("Event colors mapping:")
+    print(event_colors)
 
     # Add rectangles for the events
     for room, pos in zip(df.columns, room_positions):
@@ -37,6 +44,8 @@ def create_visualization_figure(df, month):
                 textposition='middle center',
                 showlegend=False
             ))
+    # Debugging: Print a message indicating completion of adding events
+    print("Completed adding all events to the figure.")
 
     # Customizing the layout to place room labels at the top and ensure grid appearance
     fig.update_layout(
@@ -96,7 +105,7 @@ def create_visualization_figure(df, month):
     )
 
     # Now, you would add the room name annotations with white text as previously described:
-    room_names = ['v4', 'v3', 'v2', 'v1']  # Assuming these are the room names
+    room_names = ['Ballroom 4', 'Ballroom 3', 'Ballroom 2', 'Ballroom 1']  # Assuming these are the room names
     for name, pos in zip(room_names, room_positions):
         fig.add_annotation(
             x=pos,
@@ -107,6 +116,9 @@ def create_visualization_figure(df, month):
             xanchor='center',  # Ensure the text is centered
             yanchor='middle',  # Anchor text at the bottom of the top margin
         )
+
+        # Debugging: Print a message before returning the figure
+        print("Returning the generated figure.")
 
     return fig
 
@@ -120,26 +132,13 @@ def display_figure(fig, filename='visualization.html'):
 
 # Sample usage
 if __name__ == '__main__':
-    # Create a sample DataFrame for demonstration purposes
-    sample_data = {
-        'v4': [None] * 31, 'v3': [None] * 31, 'v2': [None] * 31, 'v1': [None] * 31,
-    }
-    df_sample = pd.DataFrame(sample_data, index=np.arange(1, 32))
-    df_sample.at[10, 'v2'] = 'Event1'
-    df_sample.at[11, 'v2'] = 'Event1'
-    df_sample.at[10, 'v4'] = 'Event2'
-    df_sample.at[15, 'v3'] = 'Event3'
-    df_sample.at[30, 'v1'] = 'Event6'
-    df_sample.at[1, 'v1'] = 'Event4'
-    df_sample.at[2, 'v1'] = 'Event4'
-    df_sample.at[3, 'v1'] = 'Event4'
-    df_sample.at[4, 'v1'] = 'Event4'
-    df_sample.at[31, 'v4'] = 'Event7'
-    df_sample.at[20, 'v1'] = 'Event5'
-    df_sample.at[20, 'v2'] = 'Event5'
-    df_sample.at[20, 'v3'] = 'Event5'
-    df_sample.at[20, 'v4'] = 'Event5'
+    from generate_sample_data import generate_sample_dataframe
 
-    # Create and display the figure
-    fig = create_visualization_figure(df_sample, 'Sample Month')
-    display_figure(fig)
+    # Unpack the tuple returned by generate_sample_dataframe into df_sample and sample_month
+    df_sample, sample_month = generate_sample_dataframe()
+
+    # Now that df_sample is a DataFrame and sample_month is a string, pass them to create_visualization_figure
+    fig = create_visualization_figure(df_sample, sample_month)
+
+    # Use display_figure to display or save the generated figure
+    display_figure(fig, filename='sample_month.html')

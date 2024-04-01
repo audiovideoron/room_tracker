@@ -1,17 +1,13 @@
-# save_calendar.py
-
-import os
-from pathlib import Path
 import pandas as pd
-import plotly.graph_objects as go
+from pathlib import Path
 import plotly.io as pio
+from visualization import create_visualization_figure  # Ensure this function is correctly implemented
 
-
-def ensure_directories_exist(path: Path):
+def ensure_directories_exist(path):
     """Ensure that the specified directory exists; if not, it creates the directory."""
+    path = Path(path)
     if not path.exists():
         path.mkdir(parents=True)
-
 
 def save_calendar_files(df, month, visualization_dir='visualizations'):
     """Save the calendar data and visualizations in designated directories."""
@@ -21,19 +17,33 @@ def save_calendar_files(df, month, visualization_dir='visualizations'):
     # Define file paths
     csv_file_path = month_dir / f'{month}_calendar.csv'
     html_file_path = month_dir / f'{month}_calendar.html'
-    png_file_path = month_dir / f'{month}_calendar.png'
 
-    # Save DataFrame to CSV
-    df.to_csv(csv_file_path)
+    # Load existing data if available and combine with new data
+    if csv_file_path.exists():
+        existing_df = pd.read_csv(csv_file_path, index_col=0)
+        print("Existing DataFrame loaded:")
+        print(existing_df)
+        combined_df = pd.concat([existing_df, df], sort=False).drop_duplicates()
+        print("Combined DataFrame after appending new data:")
+        print(combined_df)
+    else:
+        combined_df = df
+        print("New DataFrame, no existing data:")
+        print(combined_df)
 
-    # Assume 'fig' is your Plotly figure created from 'df'
-    # You might need to adjust this part to create or pass 'fig' appropriately
-    fig = go.Figure()  # Placeholder for actual figure creation logic
+    # Save combined DataFrame to CSV (This part remains unchanged)
+    combined_df.to_csv(csv_file_path)
+    print(f"Saving data to: {csv_file_path}")  # Newly added print statement
 
-    # Save the figure as HTML and PNG
-    fig.write_html(str(html_file_path))
-    fig.write_image(str(png_file_path))
+    # Regenerate the visualization with combined data
+    print("Creating visualization for new data...")
+    fig = create_visualization_figure(combined_df, month)
+    print("Visualization created.")
 
-    print(f"Visualization saved as HTML: {html_file_path}")
-    print(f"Visualization saved as PNG: {png_file_path}")
-    print(f"Data saved as CSV: {csv_file_path}")
+    # Save HTML visualization
+    print(f"Saving HTML visualization to: {html_file_path}")  # Newly added print statement
+    pio.write_html(fig, file=str(html_file_path))  # Ensure string path
+    print("HTML visualization saved.")
+
+    # print(f"Data saved as CSV: {csv_file_path}")
+    # print(f"Visualization updated and saved as HTML: {html_file_path}")

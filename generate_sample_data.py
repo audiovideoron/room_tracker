@@ -14,4 +14,5 @@ def generate_sample_dataframe():
         room = np.random.choice(['v4', 'v3', 'v2', 'v1'])
         event_name = f"Event {_ + 1}"
         df_sample.at[day, room] = event_name
-    return df_sample
+    month = "sample_month"  # Replace with actual month calculation if needed
+    return df_sample, month
