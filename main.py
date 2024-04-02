@@ -4,15 +4,9 @@
 # - Handle potential exceptions or errors during the save operation.
 # - Provide feedback to the user that the data has been saved successfully or if an error occurred.
 
-# TODO: Ensure that 'month' variable is set dynamically based on the user input.
-# - Do not hardcode the month name; it should reflect the actual event month as entered by the user.
-
 # TODO: Modify 'EventCalendar' class instantiation and DataFrame setting logic.
 # - Adjust the EventCalendar class definition to accept and process user inputs as needed.
 # - Set the DataFrame within the EventCalendar instance to either the sample data or user-created data.
-
-# TODO: Implement 'display_figure()' in 'visualization.py'. - Ensure it can handle figure display or save the figure
-#  file with an appropriate name reflecting the month or other event details.
 
 # TODO: Write unit tests or prepare a manual testing plan to validate the input flow and visualization.
 # - Confirm that the application can switch seamlessly between sample data and user input.
@@ -25,15 +19,14 @@
 # TODO: Update documentation to reflect changes and guide the user through the input process.
 # - Document how the user can enter data, what data is expected, and any format they should follow.
 
-# After updating 'main.py' with these TODO comments, you can proceed with implementing each task one by one. This
-#  structured approach will help maintain clarity and focus throughout the development process.
-
+# TODO: Clean out debug print statements and implement logging
 
 from event_calendar import EventCalendar
 import visualization
 from generate_sample_data import generate_sample_dataframe
 from save_calendar import save_calendar_files
 from input import get_user_input_without_rooms, get_room_input
+import save_calendar
 import display
 
 
@@ -57,7 +50,11 @@ def main():
         save_calendar_files(df, month)
 
     # Generate and display the calendar visualization
-    fig = visualization.create_visualization_figure(df, month)
+    # fig = visualization.create_visualization_figure(df, month)
+
+    # open newly created and modified calendars
+    html_file_path = save_calendar.save_calendar_files(df, month)
+    display.display_in_browser(html_file_path)
 
 
 if __name__ == "__main__":

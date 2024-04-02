@@ -35,3 +35,5 @@ def save_calendar_files(df, month, visualization_dir='visualizations'):
 
     fig = create_visualization_figure(existing_df, month)
     pio.write_html(fig, file=html_file_path.as_posix())
+
+    return html_file_path
