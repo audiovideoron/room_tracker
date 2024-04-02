@@ -123,22 +123,23 @@ def create_visualization_figure(df, month):
     return fig
 
 
-def display_figure(fig, filename='visualization.html'):
-    """
-    Saves the figure as an HTML file and automatically opens it in the default web browser.
-    """
-    fig.write_html(filename, auto_open=True)
+# def display_figure(fig, filename='visualization.html'):
+#     """
+#     Saves the figure as an HTML file and automatically opens it in the default web browser.
+#     """
+#     # fig.write_html(filename, auto_open=True)
+#     fig.show()
 
 
 # Sample usage
-if __name__ == '__main__':
-    from generate_sample_data import generate_sample_dataframe
+# if __name__ == '__main__':
+    # from generate_sample_data import generate_sample_dataframe
 
-    # Unpack the tuple returned by generate_sample_dataframe into df_sample and sample_month
-    df_sample, sample_month = generate_sample_dataframe()
+    # # Unpack the tuple returned by generate_sample_dataframe into df_sample and sample_month
+    # df_sample, sample_month = generate_sample_dataframe()
 
-    # Now that df_sample is a DataFrame and sample_month is a string, pass them to create_visualization_figure
-    fig = create_visualization_figure(df_sample, sample_month)
+    # # Now that df_sample is a DataFrame and sample_month is a string, pass them to create_visualization_figure
+    # fig = create_visualization_figure(df_sample, sample_month)
 
-    # Use display_figure to display or save the generated figure
-    display_figure(fig, filename='sample_month.html')
+    # # Use display_figure to display or save the generated figure
+    # display_figure(fig, filename='sample_month.html')

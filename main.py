@@ -1,14 +1,4 @@
-# TODO: Refactor 'main' to allow switching between sample data and user input.
-
-# TODO: If use_sample_data is False, implement the data input flow.
-# - Call 'get_month_input()' to get the month of the event.
-# - Call 'get_user_input_without_rooms()' to get the basic event details (name, start date, end date).
-# - Call 'get_room_input()' to get the rooms where the event will take place.
-# - Construct or update the DataFrame with the provided event details and room assignments.
-
 # TODO: Integrate 'save_calendar.py' to persist event data when not using sample data.
-# - After gathering user inputs and updating the DataFrame in 'main',
-#   call a function from 'save_calendar.py' to save the event details persistently.
 # - Ensure that this saving mechanism is only triggered when 'use_sample_data' is False.
 # - Decide on the format and storage method for saving the data (e.g., CSV, JSON, database).
 # - Handle potential exceptions or errors during the save operation.
@@ -44,6 +34,7 @@ import visualization
 from generate_sample_data import generate_sample_dataframe
 from save_calendar import save_calendar_files
 from input import get_user_input_without_rooms, get_room_input
+import display
 
 
 def main():
@@ -61,14 +52,12 @@ def main():
         calendar = EventCalendar(month)
         calendar.add_event(event_name, start_date, end_date, rooms)
         df = calendar.df  # Obtain updated DataFrame from the calendar
-        print(calendar)
 
         # Save the calendar data if not using sample data
         save_calendar_files(df, month)
 
     # Generate and display the calendar visualization
     fig = visualization.create_visualization_figure(df, month)
-    visualization.display_figure(fig, month)
 
 
 if __name__ == "__main__":
