@@ -1,7 +1,8 @@
 # TODO add a method for removing or editing events
-# TODO validate date range when adding events to ensuring the start_date is before the
-#  end_date and both are within the month in question
-# TODO what happens if an event is already scheduled in a room on a given day
+# TODO validate date range when adding events to ensure the start_date is before the
+#  end_date, events can span across months
+# TODO what happens if an event is already scheduled in a room on a given day, see flips
+# TODO: in event spans only use event_name in beginning cell
 
 import pandas as pd
 

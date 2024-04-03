@@ -1,8 +1,3 @@
-# TODO: Displaying Event Names: To ensure event names are visible,
-# added alpha channel to colors and adjusted opacity
-
-# TODO: Display Room Names: In what would be row 0 and centered in each column
-
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
