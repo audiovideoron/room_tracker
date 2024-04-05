@@ -4,6 +4,13 @@ import numpy as np
 
 
 def create_visualization_figure(df, month):
+    """
+    Creates a visualization figure displaying the occupancy of ballrooms for a given month.
+
+    :param df: Pandas DataFrame containing the occupancy data. Each column represents a ballroom, and each row represents a day.
+    :param month: The month for which the occupancy is being visualized.
+    :return: Plotly Figure object representing the visualization.
+    """
     fig = go.Figure()
 
     room_positions = np.linspace(start=1, stop=4, num=4)

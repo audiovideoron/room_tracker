@@ -1,0 +1,31 @@
+"""
+This Python code is geared towards saving calendar data and associated visualizations. The code uses pandas for data manipulation, pathlib for path manipulations, and plotly.io to save visualizations. Let's break it down:
+
+Imports:
+- pandas (as 'pd') is a library providing high-performance, easy-to-use data structures.
+- pathlib is a built-in library for dealing with filesystem paths.
+- plotly.io (as 'pio') is a submodule in plotly for input/output operations.
+- create_visualization_figure is a user-defined function from the visualization module, used for generating a plotly graph from DataFrame.
+
+The `ensure_directories_exist(path)` function takes in a path as input (expected to be a pathlib Path object). This function checks a directory path, and if the directory doesn't exist, it creates one.
+
+The main function here is `save_calendar_files(df, month, visualization_dir='visualizations')`:
+
+1. `month_dir`: This line is creating a new directory path by combining the provided `visualization_dir` and the `month_calendar`.
+
+2. `ensure_directories_exist(month_dir)`: This line is making sure that the month_dir actually exists. If it doesn't exist, it will be created as a directory.
+
+3. `csv_file_path` and `html_file_path` : These lines are constructing the full paths of the csv and html files respectively.
+
+4. The following if-else block is checking if a csv file for the current month already exists in our directory.
+
+   - If it does, it reads the existing data and merges it with the new DataFrame. This is done row by row and column by column. If a cell in the existing data frame is empty and a new event is present in the new DataFrame, it will be added. If a cell is not empty and a new event is present, the new event is appended to the existing one after a semi-colon.
+
+   - If it doesn't, it directly uses the provided DataFrame for further steps
+
+5. `existing_df.to_csv(csv_file_path)`: This line is saving the existing_df DataFrame as a csv file at the path specified by `csv_file_path`.
+
+6. The following two lines are creating a plotly figure from the DataFrame and saving it as HTML in the month's directory.
+
+7. Finally, it returns the path of the HTML file. This function forms the backbone of a system to generate visualizations for calendar data each month and save those visualizations as HTML files.
+"""

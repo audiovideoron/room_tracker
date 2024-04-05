@@ -1,0 +1,72 @@
+Here's the 'save_calendar' module:
+
+This module provides a function to save the Calendar data and associated calendars in the form of visualizations.
+
+The module begins by importing necessary libraries like pandas, pathlib, and plotly.io. `pandas` is used for data manipulation, `pathlib` for path manipulations, and `plotly.io` for saving visualizations.
+
+The function `ensure_directories_exist(path)` is a utility function which checks whether a given directory path exists, and if it doesn't, creates it.
+
+The function `save_calendar_files(df, month, visualization_dir='visualizations')` accepts a DataFrame, a month, and a directory location. Inside this function:
+
+1. It creates a sub-directory for the given month under the `visualization_dir` directory.
+2. It checks if a .csv file for the given month exists. If it does, then it will append new events to the existing ones in the csv file. If this file doesn't exist, `df` is written as it is.
+3. This function then creates a visualization of the calendar for the given month using the `create_visualization_figure(df, month)` function and saves the visualization as an .html file in the month's sub-directory.
+4. The function finally returns the path for the newly created .html file.
+
+The creation of visualizations, checking for .csv files, merging of dataframes and the creation of directories are all abstracted away inside this function. All the user has to do is provide a dataframe, a month, and optionally a directory, making this function simple to use for end-users.
+
+
+Here's the 'main' module:
+
+This Python script is part of a calendar application that manages event planning in a shared space like a hotel. It is mainly composed of two parts: The first part contains several `TODO` items indicating planned features or improvements to be made, and the second part is the actual executable code.
+
+The `TODO:` comments above the script describe various features the developers need to work on. For example, unit testing, application redesign with FastAPI and PostgreSQL, handling of edge cases and input validation, etc. They also outline some long term considerations like switching to PostgreSQL for multiple users and usage of FastAPI.
+
+The executable part of the script begins with importing necessary modules such as `event_calendar`, `save_calendar`, `input`, and `display`.
+
+The `main` function serves as the entry point for this script. It first executes an infinite loop asking for user inputs to create an event until the user does not want to add another event. An event here includes the event name, start and end dates, month and rooms.
+
+The `EventCalendar` class is instantiated with `month`, and the `add_event` method is used to add the newly created event. Once an event is added, it is saved in a DataFrame.
+
+The infinite loop keeps asking for additional events to be created. Once the user does not want to add more events, the script will break out from the loop.
+
+Lastly, calendar data is saved by invoking `save_calendar_files`, and then the newly created and modified calendars are displayed in a browser using `display.display_in_browser`.
+
+The check `if __name__ == "__main__":` ensures that the `main` function is called when the script is run directly and not imported as a module.
+
+
+Here's the 'event_calendar' module:
+
+"""
+This Python code is geared towards saving calendar data and associated visualizations. The code uses pandas for data manipulation, pathlib for path manipulations, and plotly.io to save visualizations. Let's break it down:
+
+Imports:
+- pandas (as 'pd') is a library providing high-performance, easy-to-use data structures.
+- pathlib is a built-in library for dealing with filesystem paths.
+- plotly.io (as 'pio') is a submodule in plotly for input/output operations.
+- create_visualization_figure is a user-defined function from the visualization module, used for generating a plotly graph from DataFrame.
+
+The `ensure_directories_exist(path)` function takes in a path as input (expected to be a pathlib Path object). This function checks a directory path, and if the directory doesn't exist, it creates one.
+
+The main function here is `save_calendar_files(df, month, visualization_dir='visualizations')`:
+
+1. `month_dir`: This line is creating a new directory path by combining the provided `visualization_dir` and the `month_calendar`.
+
+2. `ensure_directories_exist(month_dir)`: This line is making sure that the month_dir actually exists. If it doesn't exist, it will be created as a directory.
+
+3. `csv_file_path` and `html_file_path` : These lines are constructing the full paths of the csv and html files respectively.
+
+4. The following if-else block is checking if a csv file for the current month already exists in our directory.
+
+   - If it does, it reads the existing data and merges it with the new DataFrame. This is done row by row and column by column. If a cell in the existing data frame is empty and a new event is present in the new DataFrame, it will be added. If a cell is not empty and a new event is present, the new event is appended to the existing one after a semi-colon.
+
+   - If it doesn't, it directly uses the provided DataFrame for further steps
+
+5. `existing_df.to_csv(csv_file_path)`: This line is saving the existing_df DataFrame as a csv file at the path specified by `csv_file_path`.
+
+6. The following two lines are creating a plotly figure from the DataFrame and saving it as HTML in the month's directory.
+
+7. Finally, it returns the path of the HTML file. This function forms the backbone of a system to generate visualizations for calendar data each month and save those visualizations as HTML files.
+"""
+
+

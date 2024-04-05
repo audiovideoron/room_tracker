@@ -1,13 +1,30 @@
-# TODO add a method for removing or editing events
-# TODO validate date range when adding events to ensure the start_date is before the
-#  end_date, events can span across months
-# TODO what happens if an event is already scheduled in a room on a given day, see flips
-# TODO: in event spans only use event_name in beginning cell
-
 import pandas as pd
 
 
 class EventCalendar:
+    """
+
+    The `EventCalendar` class represents a calendar for managing events in different rooms for a specific month.
+
+    Attributes:
+        - month (str): The month for which the calendar is created.
+        - df (pandas.DataFrame): The calendar data frame that stores event information.
+
+    Methods:
+        - __init__(self, month)
+            Initializes the EventCalendar object with the given month and initializes the calendar data frame.
+
+        - initialize_calendar(self)
+            Initializes the calendar data frame with dates and rooms.
+
+        - add_event(self, event_name, start_date, end_date, rooms)
+            Adds an event to the calendar for the specified date range and rooms.
+            This method performs validation checks on the rooms and date range before adding the event to the calendar.
+
+    Example usage:
+        calendar = EventCalendar('January')
+        calendar.add_event('Conference', 10, 12, ['v1', 'v2', 'v3'])
+    """
     def __init__(self, month):
         self.month = month
         self.df = self.initialize_calendar()

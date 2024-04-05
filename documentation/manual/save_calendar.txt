@@ -1,0 +1,14 @@
+This module provides a function to save the Calendar data and associated calendars in the form of visualizations.
+
+The module begins by importing necessary libraries like pandas, pathlib, and plotly.io. `pandas` is used for data manipulation, `pathlib` for path manipulations, and `plotly.io` for saving visualizations.
+
+The function `ensure_directories_exist(path)` is a utility function which checks whether a given directory path exists, and if it doesn't, creates it.
+
+The function `save_calendar_files(df, month, visualization_dir='visualizations')` accepts a DataFrame, a month, and a directory location. Inside this function:
+
+1. It creates a sub-directory for the given month under the `visualization_dir` directory.
+2. It checks if a .csv file for the given month exists. If it does, then it will append new events to the existing ones in the csv file. If this file doesn't exist, `df` is written as it is.
+3. This function then creates a visualization of the calendar for the given month using the `create_visualization_figure(df, month)` function and saves the visualization as an .html file in the month's sub-directory.
+4. The function finally returns the path for the newly created .html file.
+
+The creation of visualizations, checking for .csv files, merging of dataframes and the creation of directories are all abstracted away inside this function. All the user has to do is provide a dataframe, a month, and optionally a directory, making this function simple to use for end-users.

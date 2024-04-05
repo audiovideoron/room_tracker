@@ -5,13 +5,25 @@ from visualization import create_visualization_figure  # Ensure this is correctl
 
 
 def ensure_directories_exist(path):
-    """Ensure that the directory exists; if not, create it."""
+    """
+    Ensure that directories exist at the given path.
+
+    :param path: The path to check and create directories if they don't exist.
+    :return: None
+    """
     if not path.exists():
         path.mkdir(parents=True)
 
 
 def save_calendar_files(df, month, visualization_dir='visualizations'):
-    """Save the calendar data and visualizations in designated directories."""
+    """
+    :param df: The DataFrame that contains the calendar events to be saved.
+    :param month: The month for which the calendar events are saved.
+    :param visualization_dir: The directory where the visualization files will be saved. Defaults to 'visualizations'.
+
+    :return: The path of the saved HTML file.
+
+    """
     month_dir = Path(visualization_dir) / f"{month}_calendar"
     ensure_directories_exist(month_dir)
 

@@ -1,0 +1,15 @@
+This Python script is part of a calendar application that manages event planning in a shared space like a hotel. It is mainly composed of two parts: The first part contains several `TODO` items indicating planned features or improvements to be made, and the second part is the actual executable code.
+
+The `TODO:` comments above the script describe various features the developers need to work on. For example, unit testing, application redesign with FastAPI and PostgreSQL, handling of edge cases and input validation, etc. They also outline some long term considerations like switching to PostgreSQL for multiple users and usage of FastAPI.
+
+The executable part of the script begins with importing necessary modules such as `event_calendar`, `save_calendar`, `input`, and `display`.
+
+The `main` function serves as the entry point for this script. It first executes an infinite loop asking for user inputs to create an event until the user does not want to add another event. An event here includes the event name, start and end dates, month and rooms.
+
+The `EventCalendar` class is instantiated with `month`, and the `add_event` method is used to add the newly created event. Once an event is added, it is saved in a DataFrame.
+
+The infinite loop keeps asking for additional events to be created. Once the user does not want to add more events, the script will break out from the loop.
+
+Lastly, calendar data is saved by invoking `save_calendar_files`, and then the newly created and modified calendars are displayed in a browser using `display.display_in_browser`.
+
+The check `if __name__ == "__main__":` ensures that the `main` function is called when the script is run directly and not imported as a module.
