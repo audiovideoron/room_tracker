@@ -25,18 +25,39 @@ class EventCalendar:
         calendar = EventCalendar('January')
         calendar.add_event('Conference', 10, 12, ['v1', 'v2', 'v3'])
     """
+
     def __init__(self, month):
         self.month = month
         self.df = self.initialize_calendar()
 
     def initialize_calendar(self):
+        """
+        Initializes the calendar DataFrame with dates (1 to 31) and rooms ('v1', 'v2', 'v3', 'v4').
+
+        Note: This implementation always generates a calendar with 31 days.
+
+        :return: Initialized DataFrame representing the calendar.
+        """
         # Dynamically set the range based on the month if needed
         dates = range(1, 32)  # Adjust if needed for months with different day counts
         rooms = ['v4', 'v3', 'v2', 'v1']
         return pd.DataFrame(index=dates, columns=rooms)
 
     def add_event(self, event_name, start_date, end_date, rooms):
+        """
+        Adds an event to the calendar for the specified date range and rooms. Before adding the event,
+        it checks whether the provided rooms are valid, the start date is before the end date, and the
+        room is already booked for the desired dates.
 
+        :param event_name: Name of the event.
+        :param start_date: Start day of the event.
+        :param end_date: End day of the event.
+        :param rooms: List of rooms for the event.
+
+        :raise ValueError: If provided rooms are invalid or if the start date is after the end date.
+
+        :return: None
+        """
         # Validate room entries
         valid_rooms = ['v1', 'v2', 'v3', 'v4']
         invalid_rooms = set(rooms) - set(valid_rooms)

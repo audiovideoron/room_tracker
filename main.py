@@ -4,6 +4,13 @@ from input import get_user_input_without_rooms, get_room_input
 import save_calendar
 import display
 
+"""
+main.py
+
+This is the main execution file for the event calendar application. 
+It interacts with the user, accepts inputs for event details, 
+updates and displays the event calendar.
+"""
 
 # TODO: Minimally Viable Product (MVP) expedite development for minimum viable product
 """
@@ -41,35 +48,21 @@ Rewrite TODOs to be more programmatically instructive
 # - dates are within the valid range for the specified month,
 # - room names are valid, etc.
 
-# TODO: Long Term Product
-# - for long term considerations switch to postgresql, multiple users, fastapi, authentication
-
-# TODO: redesign application for FastAPI and postgresql
-# - Convert format and storage method for saving the data to postgresql.
-
-
-# TODO: narrow the room column display to accommodate a detail pane
-# - click on event and open it in the pane
-# - click on shared room date cell and open start end for each event
-# - calculate labor requirements
-
-# TODO: auto generate room calendar from sales records
-# - use sales form to collect data
-# - auto populate calendars from sales records
-
-# TODO: implement room lists for each hotel
-# - based on a site id
-
-
 def main():
     """
     Main Method
 
     This method is the entry point of the program.
-    It allows users to input event details, update the calendar, and save the calendar data.
+    It provides an interactive loop for users to input event details such
+    as event name, start date, end date and the rooms in which the events
+    are to be held.
+    These details are then used to update an event calendar.
+    The updated calendar is saved using the save_calendar_files method
+    from the save_calendar module and then displayed in the web browser.
 
     :return: None
     """
+
     while True:
         # Real data scenario
         event_name, start_date, end_date, month = get_user_input_without_rooms()
@@ -78,7 +71,9 @@ def main():
         # Initialize the calendar and update it with new event details
         calendar = EventCalendar(month)
         calendar.add_event(event_name, start_date, end_date, rooms)
-        df = calendar.df  # Obtain updated DataFrame from the calendar
+        # Get a reference to the calendar's DataFrame, which contains the updated
+        # event and room details, to be written to the file system in the following steps.
+        df = calendar.df
 
         # Ask the user if they want to add another event
         add_another = input("Would you like to add another event? (Yes/No) ")

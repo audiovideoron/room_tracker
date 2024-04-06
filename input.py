@@ -1,4 +1,3 @@
-
 def get_month_input():
     """
     Prompt the user to input a month name and validate the input.

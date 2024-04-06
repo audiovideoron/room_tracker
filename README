@@ -1,0 +1,20 @@
+main.py
+
+
+event_calendar.py
+TODO: refactor event_calendar.py for date range selection.
+# - if April then month of April
+# - if April 15 to May 20 then that range
+
+## Future Improvements
+
+- Long Term Product: For long term considerations, we plan to switch
+  to a structure involving postgresql, multiple users, fastapi, and authorization.
+
+- This is a significant overhaul that includes converting the format
+  and storage method for saving the data to postgresql and redesigning
+  the application for FastAPI and postgresql.
+
+- For instance, we aim to narrow the room column display to accommodate a detail pane,
+  auto-generate room calendars from sales records, implement room lists for each hotel
+  based on a site id, and other improvements.
