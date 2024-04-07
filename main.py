@@ -49,49 +49,47 @@ Rewrite TODOs to be more programmatically instructive
 # - dates are within the valid range for the specified month,
 # - room names are valid, etc.
 
+
 def main():
     """
     Main Method
 
     This method is the entry point of the program.
-    It offers an interactive loop for users to add events, view calendars, and edit them.
-    After events are added, the calendar is saved and optionally displayed or edited.
+    Users can add events, view, or edit calendars, and choose to quit when done.
     """
     directory_path = '/Users/rtp/PycharmProjects/room_schedule/visualizations'
 
     while True:
-        # Offer choices to the user for different actions
-        user_choice = input("Do you want to add a new event or view/edit calendars? (add/view/edit): ").lower()
+        user_choice = input(
+            "Do you want to add a new event, view/edit calendars, or quit? (add/view/edit/quit): ").lower()
+
         if user_choice == "add":
             event_name, start_date, end_date, month = get_user_input_without_rooms()
             rooms = get_room_input(["v1", "v2", "v3", "v4"])
 
-            # Initialize the calendar and update it with new event details
             calendar = EventCalendar(month)
             calendar.add_event(event_name, start_date, end_date, rooms)
 
-            # Save the updated calendar data to both CSV and HTML for persistence and visualization
-            html_file_path = save_calendar_files(calendar.df, month, directory_path)
+            save_calendar_files(calendar.df, month, directory_path)
             print("Calendar updated and saved.")
-            # Optionally display the updated calendar in the web browser
+
             display_choice = input("Would you like to view the updated calendar? (yes/no): ").lower()
             if display_choice == "yes":
+                # Assuming display_in_browser function takes the full path to the HTML file
+                html_file_path = f"{directory_path}/{month}_calendar/{month}_calendar.html"
                 display.display_in_browser(html_file_path)
+
         elif user_choice in ["view", "edit"]:
-            # Process for viewing or editing calendars
             month = view_calendar(directory_path)
             if user_choice == "edit" and month:
-                # Transition to edit function if 'edit' was selected and a calendar was chosen
                 edit_calendar(month, directory_path)
-        else:
-            print("Invalid option. Please choose 'add' to add a new event or 'view/edit' to manage calendars.")
 
-        # Prompt to continue or exit
-        continue_choice = input("Do you want to continue using the program? (yes/no): ").lower()
-        if continue_choice != "yes":
+        elif user_choice == "quit":
+            print("Thank you for using the calendar management system.")
             break
 
-    print("Thank you for using the calendar management system.")
+        else:
+            print("Invalid option. Please choose 'add', 'view', 'edit', or 'quit'.")
 
 
 if __name__ == "__main__":
