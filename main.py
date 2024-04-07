@@ -1,8 +1,10 @@
-from event_calendar import EventCalendar
-from save_calendar import save_calendar_files
-from input import get_user_input_without_rooms, get_room_input
+import calendar_management
 from calendar_management import view_calendar, edit_calendar
+from event_calendar import EventCalendar
+from input import get_user_input_without_rooms, get_room_input
+from save_calendar import save_calendar_files
 import display
+import config
 
 """
 main.py
@@ -25,6 +27,7 @@ Rewrite TODOs to be more programmatically instructive
 
 # TODO: MVP:
 # - open calendar and display in web browser
+# - Centralize Path Configuration with a single source for truth
 # - edit event_name
 # - edit start_date, end_date
 # - edit room_name,
@@ -57,7 +60,6 @@ def main():
     This method is the entry point of the program.
     Users can add events, view, or edit calendars, and choose to quit when done.
     """
-    directory_path = '/Users/rtp/PycharmProjects/room_schedule/visualizations'
 
     while True:
         user_choice = input(
@@ -70,19 +72,23 @@ def main():
             calendar = EventCalendar(month)
             calendar.add_event(event_name, start_date, end_date, rooms)
 
-            save_calendar_files(calendar.df, month, directory_path)
+            save_calendar_files(calendar.df, month)
             print("Calendar updated and saved.")
 
             display_choice = input("Would you like to view the updated calendar? (yes/no): ").lower()
             if display_choice == "yes":
-                # Assuming display_in_browser function takes the full path to the HTML file
-                html_file_path = f"{directory_path}/{month}_calendar/{month}_calendar.html"
-                display.display_in_browser(html_file_path)
+                html_file_path = config.VISUALIZATIONS_DIR / f"{month}_calendar" / f"{month}_calendar.html"
+                display.display_in_browser(str(html_file_path))
 
-        elif user_choice in ["view", "edit"]:
-            month = view_calendar(directory_path)
-            if user_choice == "edit" and month:
-                edit_calendar(month, directory_path)
+        elif user_choice == "view":
+            view_calendar()  # Adjusted call
+
+        elif user_choice == "edit":
+            selected_month = calendar_management.select_month_for_action()
+            if selected_month:
+                calendar_management.edit_calendar(selected_month)
+            else:
+                print("Month selection cancelled or invalid.")
 
         elif user_choice == "quit":
             print("Thank you for using the calendar management system.")

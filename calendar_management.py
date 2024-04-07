@@ -1,5 +1,33 @@
-import os
+from pathlib import Path
 from display import display_in_browser
+import config
+from config import VISUALIZATIONS_DIR  # Import the centralized path
+
+
+# In calendar_management.py
+
+def select_month_for_action():
+    """List available months and prompt the user to select one."""
+    months = list_files(config.VISUALIZATIONS_DIR)  # Assuming this function lists directories
+    if not months:
+        print("No calendars available.")
+        return None
+
+    print("Available Calendars:")
+    for index, month in enumerate(months, start=1):
+        print(f"{index}. {month}")
+
+    try:
+        choice = int(input("Select a month: ")) - 1
+    except ValueError:
+        print("Invalid selection.")
+        return None
+
+    if 0 <= choice < len(months):
+        return months[choice]
+    else:
+        print("Selection out of range.")
+        return None
 
 
 def list_files(directory_path, extension=None):
@@ -7,11 +35,12 @@ def list_files(directory_path, extension=None):
     List all files in the directory, optionally filtering by extension.
     If 'extension' is None, directories are listed instead.
     """
+    directory_path = Path(directory_path)  # Ensure directory_path is a Path object
     if extension:
-        return [file for file in os.listdir(directory_path) if file.endswith(extension)]
+        return [file.name for file in directory_path.glob(f'*{extension}')]
     else:
         # List directories only
-        return [d for d in os.listdir(directory_path) if os.path.isdir(os.path.join(directory_path, d))]
+        return [d.name for d in directory_path.iterdir() if d.is_dir()]
 
 
 def select_file(files):
@@ -24,19 +53,13 @@ def select_file(files):
     return files[choice]
 
 
-def list_directories(directory_path):
-    """
-    List all subdirectories in the given directory.
-    """
-    return [d for d in os.listdir(directory_path) if os.path.isdir(os.path.join(directory_path, d))]
-
-
-def view_calendar(directory_path):
+def view_calendar():
     """
     Allows the user to select a month and automatically opens the calendar for that month.
     Assumes each month directory contains only one .html calendar file.
+    Uses the centralized VISUALIZATIONS_DIR path.
     """
-    months = list_directories(directory_path)
+    months = list_files(VISUALIZATIONS_DIR)
     if not months:
         print("No calendars available to view.")
         return
@@ -46,28 +69,27 @@ def view_calendar(directory_path):
         print(f"{index}. {month}")
     choice = int(input("Select a month to view its calendar: ")) - 1
 
-    selected_month = months[choice]
-    month_dir = os.path.join(directory_path, selected_month)
+    if 0 <= choice < len(months):
+        selected_month = months[choice]
+        month_dir = VISUALIZATIONS_DIR / selected_month
 
-    # Assuming only one .html file per month directory, automatically select it
-    html_files = [file for file in os.listdir(month_dir) if file.endswith('.html')]
-    if html_files:
-        # Automatically select the first (and assumed only) HTML file
-        selected_file = html_files[0]
-        file_path = os.path.join(month_dir, selected_file)
-        display_in_browser(file_path)
+        html_files = list_files(month_dir, '.html')
+        if html_files:
+            selected_file = html_files[0]  # Assuming only one HTML file exists
+            file_path = month_dir / selected_file
+            display_in_browser(str(file_path))
+        else:
+            print(f"No calendar available to view for {selected_month}.")
     else:
-        print(f"No calendar available to view for {selected_month}.")
+        print("Invalid selection.")
 
 
-def edit_calendar(directory_path, month):
+def edit_calendar(month):
     """
     Placeholder function for editing calendar functionality.
-    This function is intended to be developed to allow users to edit
-    calendar events after viewing a calendar.
+    This function will be developed to allow users to edit calendar events.
 
-    :param directory_path: The path to the directory containing calendar files.
     :param month: The month of the calendar to edit, used to select the correct file.
     """
-    # TODO: Implement the functionality to edit calendar events.
+    # Implementation will use VISUALIZATIONS_DIR to locate the specific month's calendar file.
     print(f"Editing functionality for {month} calendar is not yet implemented.")
