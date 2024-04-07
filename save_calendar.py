@@ -19,16 +19,16 @@ def save_calendar_files(df, month, visualization_dir='visualizations'):
     """
     Save calendar events from a DataFrame to both a CSV file and an HTML visualization file.
 
-    :param df: The DataFrame that contains the calendar events to be saved. The dataframe should have columns representing
-    time slots/events and rows representing days. Non-empty cells should contain event details.
-    :param month: The month for which the calendar events are saved.
-    :param visualization_dir: The directory where the visualization files will be saved. Defaults to 'visualizations'.
+    :param df: The DataFrame that contains the calendar events to be saved. The dataframe should have columns
+    representing time slots/events and rows representing days. Non-empty cells should contain event details. :param
+    month: The month for which the calendar events are saved. :param visualization_dir: The directory where the
+    visualization files will be saved. Defaults to 'visualizations'.
 
     :return: The path of the saved HTML file.
 
-    Note: If a CSV file already exists for the specified month, the function attempts to merge new events with existing ones
-    without losing any information. If any potential conflicts arise (i.e., in case of already booked rooms), the new event
-    is appended beside existing events in a semicolon-separated list.
+    Note: If a CSV file already exists for the specified month, the function attempts to merge new events with
+    existing ones without losing any information. If any potential conflicts arise (i.e., in case of already booked
+    rooms), the new event is appended beside existing events in a semicolon-separated list.
     """
     month_dir = Path(visualization_dir) / f"{month}_calendar"
     ensure_directories_exist(month_dir)

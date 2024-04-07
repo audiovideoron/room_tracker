@@ -1,7 +1,7 @@
 from event_calendar import EventCalendar
 from save_calendar import save_calendar_files
 from input import get_user_input_without_rooms, get_room_input
-import save_calendar
+from calendar_management import view_calendar, edit_calendar
 import display
 
 """
@@ -40,6 +40,7 @@ Rewrite TODOs to be more programmatically instructive
         if same day & same room and same event
 """
 
+
 # TODO: date range must span across months
 
 # TODO: Write unit tests to validate the input flow and
@@ -53,39 +54,44 @@ def main():
     Main Method
 
     This method is the entry point of the program.
-    It provides an interactive loop for users to input event details such
-    as event name, start date, end date and the rooms in which the events
-    are to be held.
-    These details are then used to update an event calendar.
-    The updated calendar is saved using the save_calendar_files method
-    from the save_calendar module and then displayed in the web browser.
-
-    :return: None
+    It offers an interactive loop for users to add events, view calendars, and edit them.
+    After events are added, the calendar is saved and optionally displayed or edited.
     """
+    directory_path = '/Users/rtp/PycharmProjects/room_schedule/visualizations'
 
     while True:
-        # Real data scenario
-        event_name, start_date, end_date, month = get_user_input_without_rooms()
-        rooms = get_room_input(["v1", "v2", "v3", "v4"])
+        # Offer choices to the user for different actions
+        user_choice = input("Do you want to add a new event or view/edit calendars? (add/view/edit): ").lower()
+        if user_choice == "add":
+            event_name, start_date, end_date, month = get_user_input_without_rooms()
+            rooms = get_room_input(["v1", "v2", "v3", "v4"])
 
-        # Initialize the calendar and update it with new event details
-        calendar = EventCalendar(month)
-        calendar.add_event(event_name, start_date, end_date, rooms)
-        # Get a reference to the calendar's DataFrame, which contains the updated
-        # event and room details, to be written to the file system in the following steps.
-        df = calendar.df
+            # Initialize the calendar and update it with new event details
+            calendar = EventCalendar(month)
+            calendar.add_event(event_name, start_date, end_date, rooms)
 
-        # Ask the user if they want to add another event
-        add_another = input("Would you like to add another event? (Yes/No) ")
-        if add_another.lower() != "yes":
+            # Save the updated calendar data to both CSV and HTML for persistence and visualization
+            html_file_path = save_calendar_files(calendar.df, month, directory_path)
+            print("Calendar updated and saved.")
+            # Optionally display the updated calendar in the web browser
+            display_choice = input("Would you like to view the updated calendar? (yes/no): ").lower()
+            if display_choice == "yes":
+                display.display_in_browser(html_file_path)
+        elif user_choice in ["view", "edit"]:
+            # Process for viewing or editing calendars
+            month = view_calendar(directory_path)
+            if user_choice == "edit" and month:
+                # Transition to edit function if 'edit' was selected and a calendar was chosen
+                edit_calendar(month, directory_path)
+        else:
+            print("Invalid option. Please choose 'add' to add a new event or 'view/edit' to manage calendars.")
+
+        # Prompt to continue or exit
+        continue_choice = input("Do you want to continue using the program? (yes/no): ").lower()
+        if continue_choice != "yes":
             break
 
-    # Save the calendar data if not using sample data
-    save_calendar_files(df, month)
-
-    # open newly created and modified calendars
-    html_file_path = save_calendar.save_calendar_files(df, month)
-    display.display_in_browser(html_file_path)
+    print("Thank you for using the calendar management system.")
 
 
 if __name__ == "__main__":
