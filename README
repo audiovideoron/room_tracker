@@ -1,3 +1,5 @@
+Adopting pathlib throughout the application. See config.py.
+
 main.py
 
 
@@ -18,3 +20,7 @@ TODO: refactor event_calendar.py for date range selection.
 - For instance, we aim to narrow the room column display to accommodate a detail pane,
   auto-generate room calendars from sales records, implement room lists for each hotel
   based on a site id, and other improvements.
+
+TODO: remove redundant save_calendar_files(df, month): from calendar_management
+
+TODO: Fix no calendars after edit

@@ -1,5 +1,4 @@
 import calendar_management
-from calendar_management import view_calendar, edit_calendar
 from event_calendar import EventCalendar
 from input import get_user_input_without_rooms, get_room_input
 from save_calendar import save_calendar_files
@@ -27,7 +26,8 @@ Rewrite TODOs to be more programmatically instructive
 
 # TODO: MVP:
 # - open calendar and display in web browser
-# - Centralize Path Configuration with a single source for truth
+# - Centralize Path Configuration with pathlib and config as a
+#       single source for truth
 # - edit event_name
 # - edit start_date, end_date
 # - edit room_name,
@@ -81,7 +81,11 @@ def main():
                 display.display_in_browser(str(html_file_path))
 
         elif user_choice == "view":
-            view_calendar()  # Adjusted call
+            selected_month = calendar_management.select_month_for_action()
+            if selected_month:
+                calendar_management.view_calendar(selected_month)
+            else:
+                print("Month selection cancelled or invalid.")
 
         elif user_choice == "edit":
             selected_month = calendar_management.select_month_for_action()

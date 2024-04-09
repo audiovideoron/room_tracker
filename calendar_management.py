@@ -1,14 +1,15 @@
-from pathlib import Path
+import pandas as pd
+import plotly.io as pio
+from visualization import create_visualization_figure
+from config import VISUALIZATIONS_DIR
 from display import display_in_browser
-import config
-from config import VISUALIZATIONS_DIR  # Import the centralized path
 
-
-# In calendar_management.py
 
 def select_month_for_action():
-    """List available months and prompt the user to select one."""
-    months = list_files(config.VISUALIZATIONS_DIR)  # Assuming this function lists directories
+    """
+    List available months and prompt the user to select one.
+    """
+    months = list_files(VISUALIZATIONS_DIR)
     if not months:
         print("No calendars available.")
         return None
@@ -19,14 +20,15 @@ def select_month_for_action():
 
     try:
         choice = int(input("Select a month: ")) - 1
+        if 0 <= choice < len(months):
+            selected_month = months[choice].replace('_calendar', '')  # Remove '_calendar' if present in the
+            # directory names
+            return selected_month
+        else:
+            print("Selection out of range.")
+            return None
     except ValueError:
         print("Invalid selection.")
-        return None
-
-    if 0 <= choice < len(months):
-        return months[choice]
-    else:
-        print("Selection out of range.")
         return None
 
 
@@ -35,61 +37,96 @@ def list_files(directory_path, extension=None):
     List all files in the directory, optionally filtering by extension.
     If 'extension' is None, directories are listed instead.
     """
-    directory_path = Path(directory_path)  # Ensure directory_path is a Path object
     if extension:
         return [file.name for file in directory_path.glob(f'*{extension}')]
     else:
-        # List directories only
         return [d.name for d in directory_path.iterdir() if d.is_dir()]
 
 
-def select_file(files):
-    """
-    Prompt the user to select a file from a list of files.
-    """
-    for index, file in enumerate(files, start=1):
-        print(f"{index}. {file}")
-    choice = int(input("Select a calendar to view: ")) - 1
-    return files[choice]
+def ensure_directories_exist(path):
+    """Ensure that directories exist at the given path."""
+    path.mkdir(parents=True, exist_ok=True)
 
 
-def view_calendar():
+def save_calendar_files(df, month):
     """
-    Allows the user to select a month and automatically opens the calendar for that month.
-    Assumes each month directory contains only one .html calendar file.
-    Uses the centralized VISUALIZATIONS_DIR path.
+    Saves calendar events from a DataFrame to a CSV file and regenerates the HTML visualization.
     """
-    months = list_files(VISUALIZATIONS_DIR)
-    if not months:
-        print("No calendars available to view.")
+    month_dir = VISUALIZATIONS_DIR / f"{month}_calendar"
+    ensure_directories_exist(month_dir)
+
+    csv_file_path = month_dir / f'{month}_calendar.csv'
+    html_file_path = month_dir / f'{month}_calendar.html'
+
+    df.to_csv(csv_file_path, index=False)
+
+    fig = create_visualization_figure(df, month)
+    pio.write_html(fig, file=html_file_path)
+
+    return html_file_path
+
+
+def view_calendar(month):
+    """
+    Displays the calendar for the selected month.
+    """
+    html_file_path = VISUALIZATIONS_DIR / month / f"{month}.html"
+    if not html_file_path.exists():
+        print(f"No calendar available to view for {month}.")
         return
 
-    print("Available Calendars:")
-    for index, month in enumerate(months, start=1):
-        print(f"{index}. {month}")
-    choice = int(input("Select a month to view its calendar: ")) - 1
-
-    if 0 <= choice < len(months):
-        selected_month = months[choice]
-        month_dir = VISUALIZATIONS_DIR / selected_month
-
-        html_files = list_files(month_dir, '.html')
-        if html_files:
-            selected_file = html_files[0]  # Assuming only one HTML file exists
-            file_path = month_dir / selected_file
-            display_in_browser(str(file_path))
-        else:
-            print(f"No calendar available to view for {selected_month}.")
-    else:
-        print("Invalid selection.")
+    display_in_browser(html_file_path)
 
 
 def edit_calendar(month):
-    """
-    Placeholder function for editing calendar functionality.
-    This function will be developed to allow users to edit calendar events.
+    csv_file_path = VISUALIZATIONS_DIR / f"{month}_calendar" / f"{month}_calendar.csv"
+    if not csv_file_path.exists():
+        print(f"No calendar found for {month}.")
+        return
 
-    :param month: The month of the calendar to edit, used to select the correct file.
-    """
-    # Implementation will use VISUALIZATIONS_DIR to locate the specific month's calendar file.
-    print(f"Editing functionality for {month} calendar is not yet implemented.")
+    # Load the DataFrame ensuring the first column is used as the index
+    df = pd.read_csv(csv_file_path, index_col=0)
+
+    print("DataFrame before any operations:")
+    print(df)
+
+    # Assuming events are repeated across the DataFrame and you want to capture distinct names
+    unique_events = pd.unique(df.values.ravel())
+    unique_events = [event for event in unique_events if pd.notna(event) and isinstance(event, str)]
+
+    print("Unique events before filtering:", unique_events)
+
+    print("Available events:")
+    for i, event in enumerate(unique_events, start=1):
+        print(f"{i}: Event '{event}'")
+
+    try:
+        choice = int(input("Select an event number to edit: ")) - 1
+        if choice < 0 or choice >= len(unique_events):
+            print("Invalid selection. Please choose a valid event number.")
+            return
+        selected_event_name = unique_events[choice]
+        new_name = input("Enter the new name for the event: ")
+
+        # Apply new name to all instances of the event
+        for col in df.columns:
+            df[col] = df[col].replace(selected_event_name, new_name)
+
+        print("DataFrame after replacement:")
+        print(df)
+
+    except ValueError as e:
+        print(f"Error: {e}")
+        return
+
+    # Save the updated DataFrame back to the CSV file ensuring index is preserved
+    df.to_csv(csv_file_path, index=True)
+
+    print(f"Event '{selected_event_name}' updated to '{new_name}'.")
+
+    # Regenerate HTML visualization and display it
+    # Make sure that save_calendar_files function is equipped to regenerate the HTML visualization
+    save_calendar_files(df, month)
+    print(f"Displaying the updated calendar...")
+    view_calendar(month)
+
