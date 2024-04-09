@@ -127,6 +127,8 @@ def edit_calendar(month):
     # Regenerate HTML visualization and display it
     # Make sure that save_calendar_files function is equipped to regenerate the HTML visualization
     save_calendar_files(df, month)
-    print(f"Displaying the updated calendar...")
-    view_calendar(month)
 
+    # Use the path to the HTML file for displaying in the browser
+    html_file_path = VISUALIZATIONS_DIR / f"{month}_calendar" / f"{month}_calendar.html"
+    print(f"Event '{unique_events[choice]}' updated to '{new_name}'. Displaying the updated calendar...")
+    display_in_browser(html_file_path)
